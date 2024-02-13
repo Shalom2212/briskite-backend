@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./briskit.db"
+}
+
+model Users {
+  user_id  Int       @id @default(autoincrement())
+  name     String?    @unique
+  email    String?    @unique
+  password String?
+  phone    String    @unique
+  Orders   Orders[]
+  Rating   Rating[]
+  Address  Address[]
+  role     String
+}
+
+model Restaurants {
+  restaurant_id Int      @id @default(autoincrement())
+  name          String
+  address       String
+  phone         String
+  Orders        Orders[]
+  Rating        Rating[]
+  Food          Food[]
+}
+
+model Orders {
+  order_id        Int         @id @default(autoincrement())
+  user_id         Int
+  restaurant_id   Int
+  order_total     Decimal
+  delivery_status String
+  user            Users       @relation(fields: [user_id], references: [user_id])
+  restaurant      Restaurants @relation(fields: [restaurant_id], references: [restaurant_id])
+  Payment         Payment[]
+}
+
+model Drivers {
+  driver_id Int    @id @default(autoincrement())
+  name      String
+  phone     String
+  location  String
+  email     String
+}
+
+model Payment {
+  payment_id     Int     @id @default(autoincrement())
+  order_id       Int
+  payment_method String
+  amount         Decimal
+  status         String
+  order          Orders  @relation(fields: [order_id], references: [order_id])
+}
+
+model Rating {
+  rating_id     Int         @id @default(autoincrement())
+  user_id       Int
+  restaurant_id Int
+  rating        Int
+  user          Users       @relation(fields: [user_id], references: [user_id])
+  restaurant    Restaurants @relation(fields: [restaurant_id], references: [restaurant_id])
+}
+
+model Address {
+  address_id Int    @id @default(autoincrement())
+  user_id    Int
+  state      String
+  city       String
+  street     String
+  pincode    Int
+  user       Users  @relation(fields: [user_id], references: [user_id])
+}
+
+model Food {
+  food_id       Int         @id @default(autoincrement())
+  restaurant    Restaurants @relation(fields: [restaurant_id], references: [restaurant_id])
+  restaurant_id Int
+  food_name     String
+  price         Decimal
+  sst           Int
+  set           Int
+}
