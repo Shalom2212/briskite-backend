@@ -27,27 +27,32 @@ const isValidTime = (time, lastTime) => {
   return timeInMinutes >= refTimeInMinutes;
 };
 
-async function getRestaurantsWithinTimeRange(requestedTime, authService) {
+async function getRestaurantsWithinTimeRange(requestedTime, restaurantService) {
   const [hours, minutes] = requestedTime.split(":").map(Number);
   const requestedTimeInMinutes = hours * 60 + minutes;
 
-  const restaurants = await authService.getRestaurants(requestedTimeInMinutes);
+  const restaurants = await restaurantService.getRestaurants(
+    requestedTimeInMinutes
+  );
 
   return restaurants;
 }
 
-const restaurantsController = async ({ authService }, { phone, time }) => {
+const restaurantsController = async (
+  { restaurantService },
+  { phone, time }
+) => {
   if (phone in requestedTime && isValidTime(time, requestedTime[phone])) {
     const resRestaurants = await getRestaurantsWithinTimeRange(
-      requestedTime,
-      authService
+      requestedTime[phone],
+      restaurantService
     );
     return resRestaurants;
   }
   if (!(phone in requestedTime)) {
     const resRestaurants = await getRestaurantsWithinTimeRange(
-      requestedTime,
-      authService
+      time,
+      restaurantService
     );
     requestedTime[phone] = time;
     return resRestaurants;

@@ -37,26 +37,9 @@ const createCustomerService = async (phone, role) => {
   return user;
 };
 
-const getRestaurants = async (requestedTimeInMinutes) => {
-  const restaurants = await prisma.restaurants.findMany({
-    include: {
-      Food: {
-        where: {
-          AND: [
-            { sst: { lte: requestedTimeInMinutes } },
-            { set: { gte: requestedTimeInMinutes } },
-          ],
-        },
-      },
-    },
-  });
-  return restaurants;
-};
-
 module.exports = {
   adminAuthService,
   restaurantDeliveryService,
   getCustomerService,
   createCustomerService,
-  getRestaurants,
 };
